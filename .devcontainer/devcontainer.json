@@ -1,0 +1,28 @@
+{
+  "name": "4DGS-SLAM Dev",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "4dgs-slam-dev",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": true,
+  "remoteUser": "slam",
+  "runServices": ["4dgs-slam-dev"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "python.analysis.typeCheckingMode": "basic"
+      }
+    }
+  },
+  "containerEnv": {
+    "PYTHONUNBUFFERED": "1",
+    "WANDB_MODE": "offline"
+  }
+}

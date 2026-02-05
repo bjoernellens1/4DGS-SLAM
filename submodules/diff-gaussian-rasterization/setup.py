@@ -12,7 +12,34 @@
 from setuptools import setup
 from torch.utils.cpp_extension import CUDAExtension, BuildExtension
 import os
-os.path.dirname(os.path.abspath(__file__))
+import glob
+
+# Find libxcrypt include path for NixOS
+def get_libxcrypt_include():
+    try:
+        # Try glob to find libxcrypt in nix store (much faster than find)
+        paths = glob.glob('/nix/store/*/include/crypt.h')
+        for path in paths:
+            if 'libxcrypt' in path:
+                return os.path.dirname(path)
+    except:
+        pass
+    return None
+
+libxcrypt_include = get_libxcrypt_include()
+
+# Build compile args
+nvcc_flags = [
+    "-I" + os.path.join(os.path.dirname(os.path.abspath(__file__)), "third_party/glm/"),
+    "-gencode=arch=compute_60,code=compute_60",
+    "-gencode=arch=compute_61,code=compute_61",
+    "-gencode=arch=compute_70,code=compute_70",
+    "-gencode=arch=compute_75,code=compute_75",
+    "-gencode=arch=compute_80,code=compute_80",
+    "-gencode=arch=compute_86,code=compute_86",
+]
+if libxcrypt_include:
+    nvcc_flags.append("-I" + libxcrypt_include)
 
 setup(
     name="diff_gaussian_rasterization",
@@ -26,7 +53,9 @@ setup(
             "cuda_rasterizer/backward.cu",
             "rasterize_points.cu",
             "ext.cpp"],
-            extra_compile_args={"nvcc": ["-I" + os.path.join(os.path.dirname(os.path.abspath(__file__)), "third_party/glm/")]})
+            extra_compile_args={
+                "nvcc": nvcc_flags
+            })
         ],
     cmdclass={
         'build_ext': BuildExtension

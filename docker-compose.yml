@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   4dgs-slam-dev:
     build:
@@ -23,10 +21,6 @@ services:
       - PYTHONUNBUFFERED=1
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
-    device_requests:
-      - driver: nvidia
-        count: all
-        capabilities: [gpu]
     volumes:
       - .:/workspace
       - ${DATASETS_DIR:-./datasets}:/workspace/datasets

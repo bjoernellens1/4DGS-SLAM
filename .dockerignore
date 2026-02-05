@@ -1,35 +1,16 @@
-# Build artifacts
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
-# Virtual environments
+# Python envs
+.venv/
 venv/
-ENV/
 env/
-.venv
+ENV/
 
-# IDE
+# IDE and OS
 .vscode/
 .idea/
 *.swp
@@ -41,30 +22,23 @@ env/
 .git/
 .gitignore
 
-# Project-specific
-*.ckpt
-*.pth
-*.pt
-checkpoints/
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Large data and outputs
+datasets/
+results/
 outputs/
 logs/
 wandb/
-results/
+checkpoints/
 temp/
+pretrained/*.pt
+pretrained/*.pth
 
-# Documentation
-*.md
-LICENSE
-docs/
-
-# Images and large files
-imgs/
-*.png
-*.jpg
-*.jpeg
-*.gif
-
-# Test files
+# Tests
 tests/
 test_*.py
 *_test.py

@@ -58,8 +58,39 @@ pip install -r requirements.txt
 
 ## Docker Development Environment
 
-Prerequisites: Docker and NVIDIA Container Toolkit.
+**Prerequisites**: Docker and NVIDIA Container Toolkit.
 
+### Using Pre-built Image from GitHub Container Registry
+
+Pre-built images are automatically built and published via GitHub Actions on every push to main. This is the fastest way to get started:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/bjoernellens1/4dgs-slam:latest
+
+# Run with GPU support
+docker run --rm -it --gpus all \
+  -v $PWD/datasets:/workspace/datasets \
+  -v $PWD/results:/workspace/results \
+  ghcr.io/bjoernellens1/4dgs-slam:latest
+
+# With GUI/OpenGL support (requires xhost +local:docker)
+docker run --rm -it --gpus all \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v $PWD/datasets:/workspace/datasets \
+  -v $PWD/results:/workspace/results \
+  ghcr.io/bjoernellens1/4dgs-slam:latest
+```
+
+Available tags:
+- `latest` - Latest build from main branch
+- `main-<sha>` - Specific commit from main branch
+- `<version>` - Semantic version tags (e.g., `1.0.0`, `1.0`)
+
+### Building Locally with Docker Compose
+
+Build and run using Docker Compose:
 ```bash
 export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
@@ -67,10 +98,22 @@ docker compose build 4dgs-slam-dev
 docker compose run --rm 4dgs-slam-dev
 ```
 
-If you need GUI/OpenGL support:
+Optional GPU override for Docker Compose (Docker Engine + NVIDIA toolkit):
+```bash
+docker compose -f docker-compose.yml -f docker-compose.gpu.docker.yml build 4dgs-slam-dev
+docker compose -f docker-compose.yml -f docker-compose.gpu.docker.yml run --rm 4dgs-slam-dev
+```
+
+**Note**: `podman-compose` does not support `device_requests`, so use the base `docker-compose.yml` with Podman.
+
+### GUI/OpenGL Support
+
+If you need GUI/OpenGL support, enable X11 forwarding:
 ```bash
 xhost +local:docker
 ```
+
+### Customization
 
 You can customize versions and paths via environment variables:
 ```bash

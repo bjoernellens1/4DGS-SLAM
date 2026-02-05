@@ -28,8 +28,11 @@ def _sort_gaussian_torch(gaus, view_mat):
 # Decide which sort to use
 _sort_gaussian = None
 if not torch.cuda.is_available():
-    raise ImportError
-_sort_gaussian = _sort_gaussian_torch
+    # Fallback for environments without CUDA (e.g., NixOS testing)
+    import warnings
+    warnings.warn("CUDA not available, GPU sorting will not be used. GUI may not function properly.")
+else:
+    _sort_gaussian = _sort_gaussian_torch
 
 
 class GaussianRenderBase:

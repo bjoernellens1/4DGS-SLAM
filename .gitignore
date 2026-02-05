@@ -1,18 +1,44 @@
+__pycache__/
 *.pyc
-.vscode
-output
-build
-diff_rasterization/diff_rast.egg-info
-**.egg-info
-**.so
-diff_rasterization/dist
+*.pyo
+*.pyd
+*.so
 
-pretrained/yolov9e-seg.pt
-pretrained/raft-things.pth
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Python envs and caches
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Project outputs
+outputs/
+logs/
+wandb/
+results/
+result*/
+checkpoints/
+temp/
+
+# Data and assets
+datasets/
+pretrained/*.pt
+pretrained/*.pth
 cameras.json
 *.ply
 *.mp4
-datasets
-wandb
 
-result*
+# Devcontainer env overrides
+.devcontainer/.env

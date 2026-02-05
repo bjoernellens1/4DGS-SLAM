@@ -2,17 +2,22 @@ import json
 import os
 
 import cv2
-import evo
 import numpy as np
 import torch
+
+# Set matplotlib backend before importing evo.tools.plot (which uses matplotlib)
+import matplotlib
+matplotlib.use('Agg')
+
+import evo
 from evo.core import metrics, trajectory
 from evo.core.metrics import PoseRelation, Unit
 from evo.core.trajectory import PosePath3D, PoseTrajectory3D
+from evo.tools.settings import SETTINGS
+# Override evo's matplotlib backend settings before importing plot module
+SETTINGS.plot_backend = 'Agg'
 from evo.tools import plot
 from evo.tools.plot import PlotMode
-from evo.tools.settings import SETTINGS
-import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
@@ -58,17 +63,17 @@ def vis_render_process(render_pkg, gt_color, gt_depth, cur_frame_idx, save_dir, 
         
         h, w, _ = viz_im.shape
         #print("cur_frame_idx", cur_frame_idx)
-        #fig, ax = plt.subplots(figsize=(4, 4))  # Äã¿ÉÒÔµ÷ÕûÍ¼ÏñµÄ³ß´ç
+        #fig, ax = plt.subplots(figsize=(4, 4))  # ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½Í¼ï¿½ï¿½Ä³ß´ï¿½
         #if out_dir=="novel_render":
         #    fig, ax = plt.subplots(figsize=(w*2/100, h*2/100), dpi=100) 
         #else:
         fig, ax = plt.subplots(figsize=(w/100, h/100), dpi=100) 
         cax = ax.imshow(viz_im)
         ax.axis('off')
-        # È¥³ı¿Õ°×ÇøÓò
+        # È¥ï¿½ï¿½ï¿½Õ°ï¿½ï¿½ï¿½ï¿½ï¿½
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0, hspace=0, wspace=0)
         plt.margins(0, 0)
-        # ±£´æÍ¼Ïñ
+        # ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
         save_path = os.path.join(process_dir, f"{cur_frame_idx}_color.png")
         #plt.savefig(save_path, bbox_inches='tight', pad_inches=0, dpi=300)
         plt.savefig(save_path)
@@ -77,10 +82,10 @@ def vis_render_process(render_pkg, gt_color, gt_depth, cur_frame_idx, save_dir, 
         
         fig, ax = plt.subplots(figsize=(w/100, h/100), dpi=100) 
         cax = ax.imshow(viz_depth[0], cmap='jet', vmin=0, vmax=6)
-        # ÏÔÊ¾Éî¶ÈÍ¼Ïñ£¬Ó¦ÓÃ 'jet' ÑÕÉ«Ó³Éä
+        # ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Ó¦ï¿½ï¿½ 'jet' ï¿½ï¿½É«Ó³ï¿½ï¿½
         #cax = ax.imshow((viz_depth[0] - gt_depth), cmap='jet', vmin=0, vmax=6)
         ax.axis('off')
-        # ±£´æÍ¼Ïñ
+        # ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0, hspace=0, wspace=0)
         plt.margins(0, 0)
         save_path = os.path.join(process_dir, f"{cur_frame_idx}_depth.png")
@@ -89,21 +94,21 @@ def vis_render_process(render_pkg, gt_color, gt_depth, cur_frame_idx, save_dir, 
         
         return
         
-        fig, ax = plt.subplots(figsize=(8, 8))  # Äã¿ÉÒÔµ÷ÕûÍ¼ÏñµÄ³ß´ç
+        fig, ax = plt.subplots(figsize=(8, 8))  # ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½Í¼ï¿½ï¿½Ä³ß´ï¿½
         
         norm = mcolors.LogNorm(vmin=0.01, vmax=6) 
         mask = (gt_depth == 0)
     
-        # ¼ÆËã¾ø¶Ô²îÒì
+        # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½
         abs_diff = np.abs(viz_depth[0] - gt_depth)
     
-        # Ó¦ÓÃÑÚÂë£¬½« depth Îª 0 µÄ²¿·ÖµÄ²îÒìÒ²ÉèÖÃÎª 0
+        # Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½ depth Îª 0 ï¿½Ä²ï¿½ï¿½ÖµÄ²ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½Îª 0
         abs_diff[mask] = 0
         cax = ax.imshow(viz_depth[0], cmap='jet', vmin=0, vmax=6)
-        # ÏÔÊ¾Éî¶ÈÍ¼Ïñ£¬Ó¦ÓÃ 'jet' ÑÕÉ«Ó³Éä
+        # ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Ó¦ï¿½ï¿½ 'jet' ï¿½ï¿½É«Ó³ï¿½ï¿½
         #cax = ax.imshow((viz_depth[0] - gt_depth), cmap='jet', vmin=0, vmax=6)
         ax.axis('off')
-        # ±£´æÍ¼Ïñ
+        # ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
         save_path = os.path.join(process_dir, f"{cur_frame_idx}_depth.png")
         #plt.savefig(save_path, bbox_inches='tight', pad_inches=0, dpi=300)
         plt.close()
@@ -318,7 +323,7 @@ def eval_rendering(
     ).to("cuda")
     #print(kf_indices)
     for idx in range(0, end_idx):
-        #if idx in kf_indices:  # ÊÇ·ñ²»¼ÆËã¹Ø¼üÖ¡µÄÖ¸±ê
+        #if idx in kf_indices:  # ï¿½Ç·ñ²»¼ï¿½ï¿½ï¿½Ø¼ï¿½Ö¡ï¿½ï¿½Ö¸ï¿½ï¿½
         #    continue
         saved_frame_idx.append(idx)
         frame = frames[idx]
@@ -391,7 +396,7 @@ def eval_rendering(
                 
     if iteration == "after_opt":
         for idx in range(0, end_idx):
-            #if idx in kf_indices:  # ÊÇ·ñ²»¼ÆËã¹Ø¼üÖ¡µÄÖ¸±ê
+            #if idx in kf_indices:  # ï¿½Ç·ñ²»¼ï¿½ï¿½ï¿½Ø¼ï¿½Ö¡ï¿½ï¿½Ö¸ï¿½ï¿½
             #    continue
             frame = frames[end_idx-1]
             if idx > end_idx/2:

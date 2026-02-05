@@ -45,8 +45,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-RUN groupadd --gid ${GROUP_ID} ${USERNAME} && \
-    useradd --uid ${USER_ID} --gid ${GROUP_ID} -m -s /bin/bash ${USERNAME}
+RUN if ! getent group ${GROUP_ID} > /dev/null; then groupadd --gid ${GROUP_ID} ${USERNAME}; fi && \
+    if ! getent passwd ${USER_ID} > /dev/null; then useradd --uid ${USER_ID} --gid ${GROUP_ID} -m -s /bin/bash ${USERNAME}; fi
 
 WORKDIR /workspace
 
@@ -55,8 +55,10 @@ COPY requirements.txt /tmp/requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     python3 -m pip install --upgrade pip setuptools wheel && \
     python3 -m pip install torch==${TORCH_VERSION}+${TORCH_CUDA} torchvision==${TORCHVISION_VERSION}+${TORCH_CUDA} torchaudio==${TORCHAUDIO_VERSION} \
-      --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA} && \
-    python3 -m pip install -r /tmp/requirements.txt
+      --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA}
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    python3 -m pip install -r /tmp/requirements.txt --no-build-isolation
 
 USER ${USERNAME}
 
