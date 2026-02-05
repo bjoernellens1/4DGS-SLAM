@@ -1,0 +1,70 @@
+# Build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Project-specific
+*.ckpt
+*.pth
+*.pt
+checkpoints/
+outputs/
+logs/
+wandb/
+results/
+temp/
+
+# Documentation
+*.md
+LICENSE
+docs/
+
+# Images and large files
+imgs/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Test files
+tests/
+test_*.py
+*_test.py

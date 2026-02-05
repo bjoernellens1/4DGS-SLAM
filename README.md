@@ -56,6 +56,32 @@ pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --e
 pip install -r requirements.txt
 ```
 
+## Docker Development Environment
+
+Prerequisites: Docker and NVIDIA Container Toolkit.
+
+```bash
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
+docker compose build 4dgs-slam-dev
+docker compose run --rm 4dgs-slam-dev
+```
+
+If you need GUI/OpenGL support:
+```bash
+xhost +local:docker
+```
+
+You can customize versions and paths via environment variables:
+```bash
+export TORCH_CUDA=cu117
+export TORCH_VERSION=1.13.1
+export TORCHVISION_VERSION=0.14.1
+export TORCHAUDIO_VERSION=0.13.1
+export DATASETS_DIR=$PWD/datasets
+export RESULTS_DIR=$PWD/results
+```
+
 The simple-knn and diff-gaussian-rasterization libraries use the ones provided by MonoGS.
 ```
 pip install submodules/simple-knn

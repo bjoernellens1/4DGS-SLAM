@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  4dgs-slam-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        CUDA_BASE: ${CUDA_BASE:-11.7.1}
+        USERNAME: ${USERNAME:-slam}
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+        TORCH_VERSION: ${TORCH_VERSION:-1.13.1}
+        TORCHVISION_VERSION: ${TORCHVISION_VERSION:-0.14.1}
+        TORCHAUDIO_VERSION: ${TORCHAUDIO_VERSION:-0.13.1}
+        TORCH_CUDA: ${TORCH_CUDA:-cu117}
+    image: 4dgs-slam-dev:latest
+    container_name: 4dgs-slam-dev
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-all}
+      - NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES:-compute,utility,graphics}
+      - WANDB_MODE=${WANDB_MODE:-offline}
+      - PYTHONUNBUFFERED=1
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    device_requests:
+      - driver: nvidia
+        count: all
+        capabilities: [gpu]
+    volumes:
+      - .:/workspace
+      - ${DATASETS_DIR:-./datasets}:/workspace/datasets
+      - ${RESULTS_DIR:-./results}:/workspace/results
+      - pip-cache:/home/${USERNAME:-slam}/.cache/pip
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    working_dir: /workspace
+    ipc: host
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+volumes:
+  pip-cache:
+    driver: local
