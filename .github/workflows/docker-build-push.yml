@@ -21,7 +21,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/${{ github.event.repository.name }}
+  IMAGE_NAME: ${{ github.repository_owner }}/${{ github.event.repository.name | lower }}
 
 jobs:
   build-and-push:
@@ -84,7 +84,7 @@ jobs:
           cache-from: |
             type=gha,scope=builder
             type=gha,scope=runtime
-            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+            type=registry,ref=${{ env.REGISTRY }}/{{ env.IMAGE_NAME }}:buildcache
           cache-to: |
             type=gha,mode=max,scope=builder
             type=gha,mode=max,scope=runtime
