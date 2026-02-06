@@ -32,14 +32,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /build
 
-# Copy requirements
+# Copy requirements and source code
 COPY requirements.txt /build/requirements.txt
+COPY submodules /build/submodules
 
 # Install Python packages in build stage
 RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
     python3 -m pip install --no-cache-dir torch==${TORCH_VERSION}+${TORCH_CUDA} torchvision==${TORCHVISION_VERSION}+${TORCH_CUDA} torchaudio==${TORCHAUDIO_VERSION} \
       --extra-index-url https://download.pytorch.org/whl/${TORCH_CUDA} && \
     python3 -m pip install --no-cache-dir -r /build/requirements.txt --no-build-isolation
+
+# Build CUDA extensions (simple-knn and diff-gaussian-rasterization)
+RUN cd /build/submodules/simple-knn && \
+    python3 setup.py install && \
+    cd /build/submodules/diff-gaussian-rasterization && \
+    python3 setup.py install
+
+# Build torch-batch-svd for speedup (optional but recommended)
+RUN git clone https://github.com/KinglittleQ/torch-batch-svd /build/torch-batch-svd && \
+    cd /build/torch-batch-svd && \
+    python3 setup.py install
 
 # Stage 2: Runtime stage with minimal footprint
 FROM nvidia/cuda:${CUDA_BASE}-cudnn8-runtime-ubuntu22.04
