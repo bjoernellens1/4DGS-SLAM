@@ -6,6 +6,18 @@
 
   <h1 align="center"> 4D Gaussian Splatting SLAM
   </h1>
+  
+  <p align="center">
+    <!-- Build Status Badge -->
+    <a href="https://github.com/bjoernellens1/4DGS-SLAM/actions/workflows/docker-build-push.yml">
+      <img src="https://github.com/bjoernellens1/4DGS-SLAM/actions/workflows/docker-build-push.yml/badge.svg?branch=main" alt="Docker Build Status">
+    </a>
+    <!-- Container Registry Badge -->
+    <a href="https://github.com/bjoernellens1/4DGS-SLAM/pkgs/container/4dgs-slam">
+      <img src="https://ghcr.io/bjoernellens1/4dgs-slam/badges/image-size" alt="Container Size">
+    </a>
+  </p>
+
   <p align="center">
     <p align="center">
     <strong>Yanyan Li</strong> ·

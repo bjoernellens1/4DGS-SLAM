@@ -105,3 +105,29 @@ jobs:
 
       - name: Image digest
         run: echo ${{ steps.meta.outputs.digest }}
+
+      - name: Build Summary
+        if: always()
+        run: |
+          echo "## Docker Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Information" >> $GITHUB_STEP_SUMMARY
+          echo "- **Repository**: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tags**: ${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Digest**: ${{ steps.meta.outputs.digest }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Event**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "- **CUDA_BASE**: 11.7.1" >> $GITHUB_STEP_SUMMARY
+          echo "- **TORCH_VERSION**: 1.13.1" >> $GITHUB_STEP_SUMMARY
+          echo "- **TORCHVISION_VERSION**: 0.14.1" >> $GITHUB_STEP_SUMMARY
+          echo "- **TORCHAUDIO_VERSION**: 0.13.1" >> $GITHUB_STEP_SUMMARY
+          echo "- **TORCH_CUDA**: cu117" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Caching Strategy" >> $GITHUB_STEP_SUMMARY
+          echo "- **Multi-stage build**: Builder → Runtime" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cache sources**: GHA (builder/runtime scopes) + Registry cache" >> $GITHUB_STEP_SUMMARY
+          echo "- **Compression**: zstd level 3" >> $GITHUB_STEP_SUMMARY
+          echo "- **Base image**: nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04" >> $GITHUB_STEP_SUMMARY
