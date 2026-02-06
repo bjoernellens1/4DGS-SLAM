@@ -89,12 +89,11 @@ jobs:
           cache-from: |
             type=gha,scope=builder
             type=gha,scope=runtime
-            type=registry,ref=${{ env.REGISTRY }}/{{ env.IMAGE_NAME }}:buildcache
+            type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
           cache-to: |
             type=gha,mode=max,scope=builder
             type=gha,mode=max,scope=runtime
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }},compression=zstd,compression-level=3,force-compression=true
           build-args: |
             CUDA_BASE=11.7.1
             TORCH_VERSION=1.13.1

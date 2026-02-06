@@ -32,6 +32,9 @@ services:
     stdin_open: true
     tty: true
     command: /bin/bash
+    # GPU support configuration
+    # For Docker: Use 'docker-compose -f docker-compose.yml -f docker-compose.gpu.docker.yml up'
+    # For Podman: Use 'podman-compose -f docker-compose.yml -f docker-compose.gpu.podman.yml up'
 
 volumes:
   pip-cache:

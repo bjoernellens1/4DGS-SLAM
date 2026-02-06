@@ -7,3 +7,5 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+    # Docker GPU support via device passthrough
+    # Usage: docker-compose -f docker-compose.yml -f docker-compose.gpu.docker.yml up

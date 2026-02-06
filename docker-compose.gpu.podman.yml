@@ -1,0 +1,23 @@
+services:
+  4dgs-slam-dev:
+    devices:
+      - /dev/nvidia0:/dev/nvidia0
+      - /dev/nvidiactl:/dev/nvidiactl
+      - /dev/nvidia-uvm:/dev/nvidia-uvm
+      - /dev/nvidia-modeset:/dev/nvidia-modeset
+      - /dev/nvidia-caps/nvidia-cap1:/dev/nvidia-caps/nvidia-cap1
+      - /dev/nvidia-caps/nvidia-cap2:/dev/nvidia-caps/nvidia-cap2
+    volumes:
+      # Mount NVIDIA runtime libraries from NixOS opengl-driver
+      - /run/opengl-driver/lib:/usr/lib/nvidia:ro
+      - /nix/store:/nix/store:ro
+      - /run/opengl-driver/etc:/etc/nvidia:ro
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+      # Add NVIDIA libraries to library path for NixOS
+      - LD_LIBRARY_PATH=/usr/lib/nvidia:/usr/local/cuda/lib64:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+    # Podman GPU support for NixOS systems
+    # This mounts NVIDIA devices and the driver libraries from the host
+    # The /nix/store mount is necessary for symlinked driver libraries
+    # Usage: podman-compose -f docker-compose.yml -f docker-compose.gpu.podman.yml up
