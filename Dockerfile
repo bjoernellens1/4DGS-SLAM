@@ -1,15 +1,15 @@
-ARG CUDA_BASE=11.7.1
+ARG CUDA_BASE=12.4.1
 # Stage 1: Build stage with all development tools
-FROM nvidia/cuda:${CUDA_BASE}-cudnn8-devel-ubuntu22.04 AS builder
+FROM nvidia/cuda:${CUDA_BASE}-cudnn-devel-ubuntu22.04 AS builder
 
 LABEL maintainer="4DGS-SLAM Contributors"
 LABEL description="4D Gaussian Splatting SLAM dev environment with CUDA and OpenGL support"
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG TORCH_VERSION=1.13.1
-ARG TORCHVISION_VERSION=0.14.1
-ARG TORCHAUDIO_VERSION=0.13.1
-ARG TORCH_CUDA=cu117
+ARG TORCH_VERSION=2.10.0
+ARG TORCHVISION_VERSION=0.25.0
+ARG TORCHAUDIO_VERSION=2.10.0
+ARG TORCH_CUDA=cu124
 
 ENV CUDA_HOME=/usr/local/cuda
 ENV PATH=${CUDA_HOME}/bin:${PATH}
@@ -54,7 +54,7 @@ RUN git clone https://github.com/KinglittleQ/torch-batch-svd /build/torch-batch-
     python3 setup.py install
 
 # Stage 2: Runtime stage with minimal footprint
-FROM nvidia/cuda:${CUDA_BASE}-cudnn8-runtime-ubuntu22.04
+FROM nvidia/cuda:${CUDA_BASE}-cudnn-runtime-ubuntu22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=slam
