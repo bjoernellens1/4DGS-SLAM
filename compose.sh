@@ -1,7 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Helper script to run docker-compose or podman-compose with proper GPU support
+# Supports both Docker (with nvidia-docker/nvidia-runtime) and Podman (with device mounting)
 
 set -e
+
+# Color codes for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
 # Detect container runtime
 if command -v podman-compose &> /dev/null; then
@@ -21,45 +27,41 @@ else
     exit 1
 fi
 
-echo "Using container runtime: $RUNTIME"
+echo -e "${GREEN}Using container runtime: $RUNTIME${NC}"
 
 # Check for GPU flag
 USE_GPU=false
-if [[ " $@ " =~ " --gpu " ]]; then
-    USE_GPU=true
-    # Remove --gpu from arguments
-    set -- "${@//--gpu/}"
-fi
+VERBOSE=false
+
+# Parse arguments
+ARGS=()
+for arg in "$@"; do
+    if [ "$arg" = "--gpu" ]; then
+        USE_GPU=true
+    elif [ "$arg" = "--verbose" ]; then
+        VERBOSE=true
+    else
+        ARGS+=("$arg")
+    fi
+done
 
 # Build compose command
 if [ "$USE_GPU" = true ]; then
-    echo "Enabling GPU support..."
+    echo -e "${YELLOW}Enabling GPU support...${NC}"
+    
+    # Check if GPU devices are available
+    if [ ! -e /dev/nvidia0 ]; then
+        echo "Warning: No NVIDIA GPU devices found (/dev/nvidia0)"
+    fi
+    
     COMPOSE_FILES="-f docker-compose.yml -f $GPU_FILE"
 else
     COMPOSE_FILES="-f docker-compose.yml"
 fi
 
-# Special handling for Podman GPU without CDI (fallback to device mounting)
-if [ "$RUNTIME" = "podman" ] && [ "$USE_GPU" = true ]; then
-    # Try to detect NVIDIA devices
-    if [ -e /dev/nvidia0 ]; then
-        echo "Mounting NVIDIA devices directly for Podman..."
-        # This requires a workaround since podman-compose doesn't fully support device mapping like docker-compose
-        # We'll create a temporary override file
-        PODMAN_OVERRIDE="docker-compose.gpu.podman.override.yml"
-        cat > "$PODMAN_OVERRIDE" <<'EOF'
-services:
-  4dgs-slam-dev:
-    devices:
-      - /dev/nvidia0:/dev/nvidia0
-      - /dev/nvidiactl:/dev/nvidiactl
-      - /dev/nvidia-uvm:/dev/nvidia-uvm
-EOF
-        COMPOSE_FILES="$COMPOSE_FILES -f $PODMAN_OVERRIDE"
-        trap "rm -f $PODMAN_OVERRIDE" EXIT
-    fi
+# Execute compose command
+if [ "$VERBOSE" = true ]; then
+    echo "Command: $COMPOSE_CMD $COMPOSE_FILES ${ARGS[@]}"
 fi
 
-# Execute compose command
-echo "Running: $COMPOSE_CMD $COMPOSE_FILES $@"
-$COMPOSE_CMD $COMPOSE_FILES "$@"
+$COMPOSE_CMD $COMPOSE_FILES "${ARGS[@]}"
